@@ -1,21 +1,19 @@
 # Programming Assignment 1: AWS IAM and S3 Management with Boto3
 
-This project contains a Python script that uses the AWS SDK for Python (Boto3) to manage IAM roles, users, and S3 resources. It also includes a test suite that uses `moto` to mock AWS services, allowing the script to be tested without needing live AWS credentials.
+This project contains a Python script that uses the AWS SDK for Python (Boto3) to manage IAM roles, users, and S3 resources, as per the assignment requirements. It also includes a granular test suite that uses `moto` to mock AWS services, allowing the script to be tested without needing live AWS credentials.
 
 The script has been structured as a Python package for robustness and includes production-ready features like region-aware bucket creation and full resource cleanup.
 
 ## Features
 
-- **IAM Role Creation**: Creates two IAM roles, `Dev` and `User`, with different levels of access to S3.
-- **IAM User Creation**: Creates a new IAM user and attaches a policy allowing it to assume the `Dev` and `User` roles.
+- **IAM Role Creation**: Creates two IAM roles, `Dev` (S3 Full Access) and `User` (S3 List/Get Access).
+- **IAM User Creation**: Creates an IAM user and attaches a policy allowing it to assume the `Dev` and `User` roles.
 - **S3 Resource Management**:
-  - Assumes the `Dev` role to create a uniquely named S3 bucket in a region-aware manner.
-  - Uploads three files (`assignment1.txt`, `assignment2.txt`, `recording1.jpg`) to the bucket.
+  - Assumes the `Dev` role to create a uniquely named S3 bucket and upload `assignment1.txt`, `assignment2.txt`, and `recording1.jpg`.
 - **S3 Data Processing**:
-  - Assumes the `User` role to list objects with a specific prefix (`assignment`).
-  - Computes the total size of the filtered objects.
+  - Assumes the `User` role to find all objects with the prefix `assignment` and compute their total size.
 - **Full Resource Cleanup**: Cleans up all created resources, including S3 objects, the S3 bucket, IAM policies, roles, and the user.
-- **Testable**: The script is designed to be testable and comes with a comprehensive test suite using `pytest` and `moto`.
+- **Granular Testing**: The `test_assignment.py` script contains specific tests for each requirement of the assignment, ensuring full coverage.
 
 ## Prerequisites
 
@@ -40,18 +38,19 @@ The script has been structured as a Python package for robustness and includes p
     pytest
     ```
 
-    You should see output indicating that all tests passed.
+    You should see output indicating that all 5 tests passed, confirming that each assignment requirement is met.
 
 4.  **Run the script (with AWS Credentials):**
 
-    To run the script against a real AWS account, you must first configure your AWS credentials. You can do this by:
-    - Running `aws configure` in your terminal and providing your credentials.
-    - Setting the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` (if applicable) environment variables.
-
-    Once your credentials are set up, you can execute the script from the project root:
+    To run the script against a real AWS account, you must first configure your AWS credentials (e.g., by running `aws configure`). Once configured, execute the script from the project root:
 
     ```bash
     python prog_assignment_1/assignment.py
     ```
 
     The script will print its progress to the console as it creates, manages, and cleans up all AWS resources.
+
+## Project Structure Notes
+
+-   **`__init__.py`**: This empty file inside the `prog_assignment_1/` directory marks it as a Python package, which helps prevent import errors.
+-   **`pyproject.toml`**: This file is used to configure development tools like `pytest`. In this project, it tells `pytest` that the project's root directory should be included in the Python path (`pythonpath = ["."]` ), which allows it to find and run the tests without any path issues. This makes running tests as simple as typing `pytest`.
