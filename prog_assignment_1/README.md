@@ -24,21 +24,13 @@ This project contains a Python script that uses the AWS SDK for Python (Boto3) t
 
 1.  **Clone the repository and navigate to the project directory.**
 
-2.  **Install the required Python packages:**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-    *(Note: A `requirements.txt` file would typically be included. For this project, you can install the dependencies manually as listed below.)*
-
-3.  **Install dependencies manually:**
+2.  **Install dependencies manually:**
 
     ```bash
     pip install boto3 pytest "moto[iam,s3]"
     ```
 
-4.  **Run the tests:**
+3.  **Run the tests:**
 
     To verify that the script's logic is correct, you can run the test suite. The tests use `moto` to simulate AWS services, so no real AWS credentials are required.
 
@@ -46,7 +38,7 @@ This project contains a Python script that uses the AWS SDK for Python (Boto3) t
     PYTHONPATH=. pytest prog_assignment_1/test_assignment.py
     ```
 
-5.  **Run the script (with AWS Credentials):**
+4.  **Run the script (with AWS Credentials):**
 
     To run the script against a real AWS account, you must first configure your AWS credentials. You can do this by:
     - Running `aws configure` in your terminal and providing your credentials.
