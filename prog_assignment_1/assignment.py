@@ -119,7 +119,7 @@ def create_s3_resources(s3_dev_client):
         print(f"Bucket '{BUCKET_NAME}' created in region '{region}'.")
     except s3_dev_client.exceptions.BucketAlreadyOwnedByYou:
         print(f"Bucket '{BUCKET_NAME}' already exists and is owned by you.")
-
+    
     print("Uploading objects to the bucket...")
     s3_dev_client.upload_file("assignment1.txt", BUCKET_NAME, "assignment1.txt")
     s3_dev_client.upload_file("assignment2.txt", BUCKET_NAME, "assignment2.txt")
