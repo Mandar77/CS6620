@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 TABLE_NAME = os.environ.get("DDB_TABLE", "S3-object-size-history")
-BUCKET = os.environ.get("BUCKET", "testbucket-PLACEHOLDER-UNIQUE")
+BUCKET = os.environ.get("BUCKET", "testbucket-mandar-cs6620")
 GSI_NAME = os.environ.get("GSI_NAME", "bucket_size_index")
 
 dynamodb = boto3.resource("dynamodb", region_name=REGION)
@@ -26,8 +26,9 @@ def query_last_10_seconds(bucket):
         ScanIndexForward=True
     )
     items = resp.get('Items', [])
-    xs = [item['ts'] / 1000.0 for item in items]
-    ys = [item['size'] for item in items]
+    # convert DynamoDB Decimal -> float/int
+    xs = [float(item['ts']) / 1000.0 for item in items]
+    ys = [float(item['size']) for item in items]
     return xs, ys
 
 def query_max_size(bucket):
@@ -39,8 +40,8 @@ def query_max_size(bucket):
     )
     items = resp.get('Items', [])
     if items:
-        return items[0].get('size', 0)
-    return 0
+        return float(items[0].get('size', 0))
+    return 0.0
 
 def make_plot(xs, ys, max_size, bucket):
     plt.figure(figsize=(8,4))
@@ -50,7 +51,7 @@ def make_plot(xs, ys, max_size, bucket):
         # empty plot placeholder
         plt.plot([],[])
         plt.text(0.5, 0.5, "No data in last 10s", horizontalalignment='center', transform=plt.gca().transAxes)
-    plt.axhline(y=max_size, linestyle='--', label=f'Historical high = {max_size} bytes')
+    plt.axhline(y=max_size, linestyle='--', label=f'Historical high = {int(max_size)} bytes')
     plt.title(f"Bucket size changes (last 10s) for {bucket}")
     plt.xlabel("timestamp (s)")
     plt.ylabel("size (bytes)")
@@ -62,9 +63,9 @@ def make_plot(xs, ys, max_size, bucket):
     buf.seek(0)
     return buf
 
-def upload_plot(buf, key):
-    s3.upload_fileobj(buf, BUCKET, key)
-    return {"bucket": BUCKET, "key": key}
+def upload_plot(buf, bucket, key):
+    s3.upload_fileobj(buf, bucket, key)
+    return {"bucket": bucket, "key": key}
 
 def lambda_handler(event, context):
     """
@@ -73,7 +74,7 @@ def lambda_handler(event, context):
     """
     try:
         bucket = BUCKET
-        # if API Gateway provides query string
+        # if API Gateway provides query string - works for REST proxy and HTTP APIs with queryStringParameters
         qs = event.get('queryStringParameters') or {}
         if qs and qs.get('bucket'):
             bucket = qs.get('bucket')
@@ -82,12 +83,12 @@ def lambda_handler(event, context):
         buf = make_plot(xs, ys, max_size, bucket)
         ts = int(time.time())
         key = f"plot-{ts}.png"
-        upload_plot(buf, key)
-        url = s3.generate_presigned_url('get_object', Params={'Bucket': BUCKET, 'Key': key}, ExpiresIn=3600)
+        upload_plot(buf, bucket, key)
+        url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket, 'Key': key}, ExpiresIn=3600)
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "application/json"},
-            "body": f'{{"s3_bucket":"{BUCKET}","s3_key":"{key}","presigned_url":"{url}"}}'
+            "body": f'{{"s3_bucket":"{bucket}","s3_key":"{key}","presigned_url":"{url}"}}'
         }
     except Exception as e:
         print("Error in plotting_lambda:", e)

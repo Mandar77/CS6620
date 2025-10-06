@@ -4,7 +4,7 @@ import time
 import os
 import urllib.request
 
-BUCKET = os.environ.get("BUCKET", "testbucket-PLACEHOLDER-UNIQUE")
+BUCKET = os.environ.get("BUCKET", "testbucket-mandar-cs6620")
 PLOTTING_API = os.environ.get("PLOTTING_API", "https://REPLACE_WITH_YOUR_API.execute-api.REGION.amazonaws.com/prod/plot")
 
 s3 = boto3.client("s3")

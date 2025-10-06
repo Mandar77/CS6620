@@ -8,8 +8,8 @@ import boto3
 import botocore
 import time
 
-REGION = "us-east-1"           # <-- change as needed
-BUCKET = "testbucket-PLACEHOLDER-UNIQUE"  # <-- change to a globally unique name
+REGION = "us-east-1"           
+BUCKET = "testbucket-mandar-cs6620" 
 TABLE_NAME = "S3-object-size-history"
 
 s3 = boto3.client("s3", region_name=REGION)

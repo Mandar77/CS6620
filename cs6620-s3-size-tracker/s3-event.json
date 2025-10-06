@@ -1,0 +1,8 @@
+{
+  "LambdaFunctionConfigurations": [
+    {
+      "LambdaFunctionArn": "arn:aws:lambda:us-east-1:696791035505:function:size-tracking-lambda",
+      "Events": ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
+    }
+  ]
+}
