@@ -5,3 +5,7 @@ pythonpath = [
 testpaths = [
   "prog_assignment_1"
 ]
+
+[tool.pyright]
+reportMissingImports = "none"
+reportMissingModuleSource = "none"
