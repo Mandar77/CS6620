@@ -1,10 +1,18 @@
 from aws_cdk import App
-from cdk_s3_monitoring.compute_stack import ComputeStack
-from cdk_s3_monitoring.api_stack import ApiStack
+from cdk_s3_monitoring.storage_stack import StorageStack
+from cdk_s3_monitoring.lambda_stack import LambdaStack
 
 app = App()
 
-compute = ComputeStack(app, "ComputeStack")
-api = ApiStack(app, "ApiStack")
+# First create storage stack
+storage = StorageStack(app, "StorageStack")
+
+# Then create lambda stack, passing storage resources as props
+lambdas = LambdaStack(
+    app,
+    "LambdaStack",
+    bucket=storage.bucket,
+    table=storage.table,
+)
 
 app.synth()
